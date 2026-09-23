@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const verifyAdminJWT = require('../middleware/verifyAdminJWT');
@@ -82,20 +83,24 @@ router.put('/photos/:id', async (req, res) => {
     const { id } = req.params;
     const { caption, order } = req.body;
 
-    if (getIsConnected()) {
-      const updated = await Photo.findByIdAndUpdate(id, { caption, order: Number(order) }, { new: true });
-      return res.json(updated);
-    }
-
     const index = inMemoryStore.photos.findIndex(p => String(p._id) === String(id));
     if (index !== -1) {
       if (caption !== undefined) inMemoryStore.photos[index].caption = caption;
       if (order !== undefined) inMemoryStore.photos[index].order = Number(order);
+    }
+
+    if (getIsConnected() && mongoose.isValidObjectId(id)) {
+      const updated = await Photo.findByIdAndUpdate(id, { caption, order: Number(order) }, { new: true });
+      if (updated) return res.json(updated);
+    }
+
+    if (index !== -1) {
       return res.json(inMemoryStore.photos[index]);
     }
     return res.status(404).json({ message: 'Photo not found.' });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to update photo.' });
+    console.error('Error updating photo:', error);
+    return res.status(500).json({ message: 'Failed to update photo.', error: error.message });
   }
 });
 
@@ -104,7 +109,9 @@ router.delete('/photos/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (getIsConnected()) {
+    inMemoryStore.photos = inMemoryStore.photos.filter(p => String(p._id) !== String(id));
+
+    if (getIsConnected() && mongoose.isValidObjectId(id)) {
       const photo = await Photo.findById(id);
       if (photo && photo.public_id && isCloudinaryConfigured) {
         try {
@@ -114,13 +121,12 @@ router.delete('/photos/:id', async (req, res) => {
         }
       }
       await Photo.findByIdAndDelete(id);
-      return res.json({ message: 'Photo deleted successfully.' });
     }
 
-    inMemoryStore.photos = inMemoryStore.photos.filter(p => String(p._id) !== String(id));
-    return res.json({ message: 'Photo deleted from memory.' });
+    return res.json({ message: 'Photo deleted successfully.' });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to delete photo.' });
+    console.error('Error deleting photo:', error);
+    return res.status(500).json({ message: 'Failed to delete photo.', error: error.message });
   }
 });
 
@@ -149,14 +155,17 @@ router.post('/wishes', async (req, res) => {
 router.delete('/wishes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    if (getIsConnected()) {
-      await Wish.findByIdAndDelete(id);
-      return res.json({ message: 'Wish deleted.' });
-    }
+
     inMemoryStore.wishes = inMemoryStore.wishes.filter(w => String(w._id) !== String(id));
+
+    if (getIsConnected() && mongoose.isValidObjectId(id)) {
+      await Wish.findByIdAndDelete(id);
+    }
+
     return res.json({ message: 'Wish deleted.' });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to delete wish.' });
+    console.error('Error deleting wish:', error);
+    return res.status(500).json({ message: 'Failed to delete wish.', error: error.message });
   }
 });
 
