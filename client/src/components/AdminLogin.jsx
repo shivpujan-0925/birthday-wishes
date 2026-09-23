@@ -101,7 +101,7 @@ const AdminLogin = () => {
         </form>
 
         <p className="mt-6 text-center text-xs text-gray-400">
-          Default login credentials: <span className="text-gray-600 font-semibold">admin</span> / <span className="text-gray-600 font-semibold">tanisha2026</span>
+          Default login credentials: <span className="text-gray-600 font-semibold">admin</span> / <span className="text-gray-600 font-semibold">jon2025</span>
         </p>
       </motion.div>
     </div>
