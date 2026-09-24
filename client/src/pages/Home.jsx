@@ -3,9 +3,13 @@ import { motion } from 'framer-motion';
 import {
   Sparkles,
   Heart,
-  Lock
+  Lock,
+  Volume2,
+  VolumeX,
+  Music as MusicIcon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useMusic } from '../context/MusicContext';
 import { contentApi } from '../services/api';
 import LockScreen from '../components/LockScreen';
 import HeroSection from '../components/HeroSection';
@@ -15,6 +19,7 @@ import PhotoGallery from '../components/PhotoGallery';
 
 const Home = () => {
   const { isUnlocked, birthdayGirl, lockWebsite } = useAuth();
+  const { isPlaying, timeLeft, toggleMusic } = useMusic();
   const [photos, setPhotos] = useState([]);
   const [wishes, setWishes] = useState([]);
   const [note, setNote] = useState(null);
@@ -52,6 +57,29 @@ const Home = () => {
     <div className="relative min-h-screen pb-24">
       {/* Top Floating Control Bar */}
       <header className="fixed top-5 right-5 z-40 flex items-center gap-3">
+        {/* Birthday Music Player Button */}
+        <button
+          onClick={toggleMusic}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-full glass-card border text-xs font-semibold shadow-md transition-all cursor-pointer ${
+            isPlaying
+              ? 'bg-pink-500 text-white border-pink-400 shadow-pink-500/25 animate-pulse'
+              : 'hover:bg-white/90 text-pink-700 border-pink-200'
+          }`}
+          title={isPlaying ? `Playing Birthday Music (${timeLeft}s left)` : 'Play Birthday Music (15s)'}
+        >
+          {isPlaying ? (
+            <>
+              <Volume2 className="w-4 h-4 animate-bounce" />
+              <span>Playing ({timeLeft}s)</span>
+            </>
+          ) : (
+            <>
+              <VolumeX className="w-4 h-4 text-pink-400" />
+              <span>Play Music 🎵</span>
+            </>
+          )}
+        </button>
+
         {/* Lock Screen Button */}
         <button
           onClick={lockWebsite}

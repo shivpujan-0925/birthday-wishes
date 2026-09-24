@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { Sparkles, Heart, Gift, Calendar, AlertCircle } from 'lucide-react';
 import { authApi } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useMusic } from '../context/MusicContext';
 
 const LockScreen = () => {
   const [date, setDate] = useState('');
@@ -12,6 +13,7 @@ const LockScreen = () => {
   const [loading, setLoading] = useState(false);
   const [shake, setShake] = useState(false);
   const { unlockWebsite } = useAuth();
+  const { triggerUnlockMusic } = useMusic();
 
   const triggerConfettiExplosion = () => {
     // Stage 1: Side Cannons
@@ -67,6 +69,7 @@ const LockScreen = () => {
       const response = await authApi.verifyDate(date, month);
       if (response.data.success) {
         triggerConfettiExplosion();
+        triggerUnlockMusic();
         setTimeout(() => {
           unlockWebsite(response.data.token, response.data.name || 'Tanisha');
         }, 800);
