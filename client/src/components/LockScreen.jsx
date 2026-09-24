@@ -89,9 +89,8 @@ const LockScreen = () => {
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
-        className={`w-full max-w-md glass-card rounded-3xl p-8 sm:p-10 text-center shadow-2xl relative overflow-hidden ${
-          shake ? 'animate-bounce' : ''
-        }`}
+        className={`w-full max-w-md glass-card rounded-3xl p-8 sm:p-10 text-center shadow-2xl relative overflow-hidden ${shake ? 'animate-bounce' : ''
+          }`}
       >
         {/* Decorative corner ribbons & glowing orbs */}
         <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-bl from-pink-400/30 via-rose-300/20 to-transparent rounded-bl-full pointer-events-none" />
@@ -143,7 +142,7 @@ const LockScreen = () => {
                 type="number"
                 min="1"
                 max="31"
-                placeholder="DD (e.g. 25)"
+                placeholder=" "
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="w-full px-4 py-3 rounded-2xl bg-white/80 border border-pink-200 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 outline-none text-center font-bold text-lg text-gray-800 placeholder:text-gray-300 transition-all duration-200 shadow-inner"
@@ -159,7 +158,7 @@ const LockScreen = () => {
                 type="number"
                 min="1"
                 max="12"
-                placeholder="MM (e.g. 09)"
+                placeholder=" "
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
                 className="w-full px-4 py-3 rounded-2xl bg-white/80 border border-purple-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none text-center font-bold text-lg text-gray-800 placeholder:text-gray-300 transition-all duration-200 shadow-inner"
